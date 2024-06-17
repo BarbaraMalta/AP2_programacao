@@ -27,4 +27,3 @@ class pocao:
         self.visível = False
         
 pocao = pocao()
-print(pocao.desenhar_simbolo())
