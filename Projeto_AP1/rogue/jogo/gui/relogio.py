@@ -1,6 +1,9 @@
 import time
 
 class Relogio:
+    def __init__(self):
+        self.rodadas = 0
+
     def iniciar(self):
         self.inicio = time.time()
 
@@ -8,15 +11,21 @@ class Relogio:
         tempo_decorrido = time.time() - self.inicio
         minutos = int(tempo_decorrido // 60)
         segundos = int(tempo_decorrido - minutos * 60)
-        return f"{str(minutos).rjust(2, '0')}:{str(segundos).rjust(2, '0')}"
+        return f"{minutos:02d}:{segundos:02d}"
 
-relogio = Relogio()
+    def incrementar_rodadas(self):
+        self.rodadas += 1
 
+    def obter_rodadas(self):
+        return self.rodadas
 
-relogio = Relogio()
-relogio.iniciar()
+    def exportar(self):
+        return {
+            "inicio": self.inicio,
+            "atual": time.time(),
+            "rodadas": self.rodadas
+        }
 
-# Simula a passagem de tempo
-time.sleep(5)
-
-print(relogio.medir_tempo())
+    def importar(self, dados):
+        self.inicio = time.time() - (dados["atual"] - dados["inicio"])
+        self.rodadas = dados["rodadas"]
