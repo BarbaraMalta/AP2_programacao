@@ -1,6 +1,6 @@
 from .cores import CORES
 from .relogio import relogio
-
+from mecanicas import pocao
 import pygame
 
 GRID = 40
@@ -24,7 +24,7 @@ class Tela:
         self.display.fill(CORES.preto)
         self.aventureiro(aventureiros)
         self.tesouro(tesouro)
-        self.mapa(aventureiros, tesouro, obstaculos)
+        self.mapa(aventureiros, tesouro, obstaculos, pocao)
         self.combate(aventureiros[1 - id_jogador].status)
         self.obstaculos(obstaculos)
         self.turno(id_jogador)
@@ -71,6 +71,10 @@ class Tela:
         for obstaculo in obstaculos:
             self.escreve_grid("O", obstaculo.posicao)
 
+    def pocao(self, pocao):
+        for pocao in pocao:
+            self.escreve_grid("%", pocao.posicao)
+            
     def aventureiro(self, aventureiros):
         fonte = pygame.font.SysFont(FONTE, GRID // 2)
         for i, aventureiro in enumerate(aventureiros):
@@ -93,6 +97,8 @@ class Tela:
                 posicoes_invalidas = [aventureiros[0].posicao, aventureiros[1].posicao, tesouro.posicao]
                 for obstaculo in obstaculos:
                     posicoes_invalidas.append(obstaculo.posicao)
+                    for pocao in pocao:
+                        posicoes_invalidas.append(pocao.posicao)
                 if [linha, coluna] not in posicoes_invalidas:
                     self.escreve_grid(".", [linha, coluna])
 
