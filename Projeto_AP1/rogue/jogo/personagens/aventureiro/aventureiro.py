@@ -1,9 +1,10 @@
 import random
+from ...mecanicas import som
 
 XP_POR_NIVEL = 5
 
 class Aventureiro:
-    def __init__(self, nome, i):
+    def _init_(self, nome, i):
         self.forca = random.randint(10, 18)
         self.defesa = random.randint(10, 18)
         self.vida_max = random.randint(100, 120)
@@ -23,6 +24,43 @@ class Aventureiro:
         self.primeiro_movimento = True
         self.status = f"Comece a explorar"
         self.fim_jogo = None
+
+    def exportar(self):
+        return {
+            "forca": self.forca,
+            "defesa": self.defesa,
+            "vida_max": self.vida_max,
+            "vida": self.vida,
+            "posicao": self.posicao,
+            "char": self.char,
+            "nome": self.nome,
+            "nivel": self.nivel,
+            "xp": self.xp,
+            "turnos_veneno": self.turnos_veneno,
+            "primeiro_movimento": self.primeiro_movimento,
+            "status": self.status,
+            "fim_jogo": self.fim_jogo,
+            "classe": self._class.name_
+        }
+
+    def importar(self, dados):
+        self.forca = dados["forca"]
+        self.defesa = dados["defesa"]
+        self.vida_max = dados["vida_max"]
+        self.vida = dados["vida"]
+        self.posicao = dados["posicao"]
+
+        self.char = dados["char"]
+        self.nome = dados["nome"]
+
+        self.nivel = dados["nivel"]
+        self.xp = dados["xp"]
+
+        self.turnos_veneno = dados["turnos_veneno"]
+
+        self.primeiro_movimento = dados["primeiro_movimento"]
+        self.status = dados["status"]
+        self.fim_jogo = dados["fim_jogo"]
 
     def iniciar_veneno(self):
         if self.turnos_veneno == 0:
@@ -48,6 +86,7 @@ class Aventureiro:
         self.forca += 2
         self.defesa += 2
         print(f"{self.nome} ganhou um nível!")
+        som.levelup()
 
     def calcular_pos_futura(self, direcao):
         x, y = self.posicao
@@ -63,8 +102,16 @@ class Aventureiro:
 
         return [x, y]
 
-    def andar(self, pos_futura):
+    def andar(self, pos_futura, pocao):
         self.posicao = pos_futura
+        self.verificar_pocao(pocao)
+
+    def verificar_pocao(self, pocao):
+        for p in pocao:
+            if self.posicao == p.posicao:
+                self.vida = min(self.vida + p.vida, self.vida_max)
+                pocao.remove(p)
+                self.status = f"{self.nome} encontrou uma poção e recuperou {p.vida} de vida!"
 
     def atacar(self):
         """
@@ -92,7 +139,7 @@ class Aventureiro:
         """
         return self.vida > 0
 
-    def __str__(self):
+    def _str_(self):
         return f"""Aventureiro {self.nome}:
 Força:  {self.forca}
 Defesa: {self.defesa}
